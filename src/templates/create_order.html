@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Order - Mini Store Manager</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        nav {
+            margin-bottom: 30px;
+        }
+
+        nav a {
+            margin-right: 20px;
+            text-decoration: none;
+        }
+
+        form {
+            max-width: 900px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        select,
+        input {
+            padding: 8px;
+            margin-top: 5px;
+        }
+
+        .customer-select {
+            width: 350px;
+        }
+
+        .item-row {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+            margin-top: 15px;
+        }
+
+        .product-select {
+            width: 350px;
+        }
+
+        .quantity-input {
+            width: 100px;
+        }
+
+        button {
+            padding: 9px 15px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .remove-button {
+            margin-top: 0;
+        }
+
+        .cancel {
+            margin-left: 10px;
+        }
+
+        .stock-info {
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('products.product_list') }}">Products</a>
+        <a href="{{ url_for('customers.customer_list') }}">Customers</a>
+        <a href="{{ url_for('orders.order_list') }}">Orders</a>
+    </nav>
+
+    <h1>Create Order</h1>
+    {% if errors %}
+    <div style="color: #b00020; background: #ffe5e5; padding: 15px; margin-bottom: 20px;">
+        <strong>Please fix the following:</strong>
+
+        <ul>
+            {% for error in errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+    <form method="POST">
+
+        <label for="customer_id">Customer</label>
+
+        <select
+            id="customer_id"
+            name="customer_id"
+            class="customer-select"
+            required
+        >
+            <option value="">-- Select Customer --</option>
+
+            {% for customer in customers %}
+
+                <option
+                    value="{{ customer.customer_id }}"
+                    {% if form.get('customer_id', '')|string == customer.customer_id|string %}
+                        selected
+                    {% endif %}
+                >
+                    {{ customer.first_name }} {{ customer.last_name }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+
+        <h2>Order Items</h2>
+
+        <div id="items-container">
+
+            <div class="item-row">
+
+                <div>
+                    <label>Product</label>
+
+                    <select
+                        name="product_id[]"
+                        class="product-select"
+                        required
+                    >
+                        <option value="">-- Select Product --</option>
+
+                        {% for product in products %}
+
+                            <option value="{{ product.product_id }}">
+                                {{ product.name }}
+                                - €{{ "%.2f"|format(product.price) }}
+                                (Stock: {{ product.stock }})
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div>
+                    <label>Quantity</label>
+
+                    <input
+                        type="number"
+                        name="quantity[]"
+                        class="quantity-input"
+                        min="1"
+                        value="1"
+                        required
+                    >
+                </div>
+
+                <button
+                    type="button"
+                    class="remove-button"
+                    onclick="removeItem(this)"
+                >
+                    Remove
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <button type="button" onclick="addItem()">
+            + Add Another Product
+        </button>
+
+        <br>
+
+        <button type="submit">
+            Create Order
+        </button>
+
+        <a
+            class="cancel"
+            href="{{ url_for('orders.order_list') }}"
+        >
+            Cancel
+        </a>
+
+    </form>
+
+
+    <script>
+        function addItem() {
+            const container = document.getElementById("items-container");
+
+            const firstRow = container.querySelector(".item-row");
+
+            const newRow = firstRow.cloneNode(true);
+
+            newRow.querySelector("select").value = "";
+            newRow.querySelector("input").value = "1";
+
+            container.appendChild(newRow);
+        }
+
+
+        function removeItem(button) {
+            const container = document.getElementById("items-container");
+            const rows = container.querySelectorAll(".item-row");
+
+            if (rows.length > 1) {
+                button.closest(".item-row").remove();
+            }
+        }
+    </script>
+
+</body>
+</html>

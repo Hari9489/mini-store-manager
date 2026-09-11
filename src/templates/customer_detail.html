@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Details - Mini Store Manager</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        nav {
+            margin-bottom: 30px;
+        }
+
+        nav a {
+            margin-right: 20px;
+            text-decoration: none;
+        }
+
+        .customer-info {
+            background: #f5f5f5;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .total {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('products.product_list') }}">Products</a>
+        <a href="{{ url_for('customers.customer_list') }}">Customers</a>
+    </nav>
+
+    <h1>Customer Details</h1>
+
+    <div class="customer-info">
+
+        <h2>
+            {{ customer.first_name }}
+            {{ customer.last_name }}
+        </h2>
+
+        <p>
+            <strong>Email:</strong>
+            {{ customer.email }}
+        </p>
+
+        <p>
+            <strong>Phone:</strong>
+            {{ customer.phone or "-" }}
+        </p>
+
+        <p>
+            <strong>Customer since:</strong>
+            {{ customer.created_at }}
+        </p>
+
+    </div>
+
+    <div class="total">
+        Total Spent:
+        €{{ "%.2f"|format(total_spent) }}
+    </div>
+
+    <h2>Order History</h2>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Order Date</th>
+                <th>Order Total</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for order in orders %}
+
+                <tr>
+                    <td>
+                        {{ order.order_id }}
+                    </td>
+
+                    <td>
+                        {{ order.order_date }}
+                    </td>
+
+                    <td>
+                        €{{ "%.2f"|format(order.order_total) }}
+                    </td>
+                </tr>
+
+            {% else %}
+
+                <tr>
+                    <td colspan="3">
+                        This customer has no orders.
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    <p>
+        <a href="{{ url_for('customers.customer_list') }}">
+            ← Back to Customers
+        </a>
+    </p>
+
+</body>
+</html>

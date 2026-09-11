@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customers - Mini Store Manager</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        nav {
+            margin-bottom: 30px;
+        }
+
+        nav a {
+            margin-right: 20px;
+            text-decoration: none;
+        }
+
+        .filter-form {
+            margin-bottom: 25px;
+        }
+
+        select {
+            padding: 8px;
+        }
+
+        button {
+            padding: 8px 14px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f2f2f2;
+        }
+
+        .money {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('products.product_list') }}">Products</a>
+        <a href="{{ url_for('customers.customer_list') }}">Customers</a>
+    </nav>
+
+    <h1>Customers</h1>
+
+    <form method="GET" class="filter-form">
+
+        <label for="filter">Customer filter:</label>
+
+        <select id="filter" name="filter">
+
+            <option
+                value="all"
+                {% if selected_filter == "all" %}selected{% endif %}
+            >
+                All Customers
+            </option>
+
+            <option
+                value="with_orders"
+                {% if selected_filter == "with_orders" %}selected{% endif %}
+            >
+                Customers With Orders
+            </option>
+
+            <option
+                value="without_orders"
+                {% if selected_filter == "without_orders" %}selected{% endif %}
+            >
+                Customers Without Orders
+            </option>
+
+        </select>
+
+        <button type="submit">Apply Filter</button>
+
+    </form>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Orders</th>
+                <th>Total Spent</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for customer in customers %}
+
+                <tr>
+
+                    <td>
+                        {{ customer.customer_id }}
+                    </td>
+
+                    <td>
+                        {{ customer.first_name }}
+                        {{ customer.last_name }}
+                    </td>
+
+                    <td>
+                        {{ customer.email }}
+                    </td>
+
+                    <td>
+                        {{ customer.phone or "-" }}
+                    </td>
+
+                    <td>
+                        {{ customer.order_count }}
+                    </td>
+
+                    <td class="money">
+                        €{{ "%.2f"|format(customer.total_spent) }}
+                    </td>
+
+                    <td>
+                        <a href="{{ url_for(
+                            'customers.customer_detail',
+                            customer_id=customer.customer_id
+                        ) }}">
+                            View History
+                        </a>
+                    </td>
+
+                </tr>
+
+            {% else %}
+
+                <tr>
+                    <td colspan="7">
+                        No customers found.
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</body>
+</html>
