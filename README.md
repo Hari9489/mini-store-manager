@@ -128,6 +128,7 @@ The relationship test should report:
 
 Foreign key violations:
 None - all foreign keys are valid.
+
 5. Installation
 5.1 Create the Virtual Environment
 
@@ -141,6 +142,7 @@ On Windows PowerShell:
 .\venv\Scripts\Activate.ps1
 5.3 Install Dependencies
 python -m pip install -r requirements.txt
+
 6. Database Setup
 
 The project includes the database schema and seed data.
